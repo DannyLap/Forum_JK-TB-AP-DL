@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Forum : Chat</title>
+    <link rel="stylesheet" href="/style/chat.css">
+    <link rel="stylesheet" href="static/chat.css">
+</head>
+<body>
+    <nav class="outline">
+        <!-- ... -->
+        <form action=/changeTopic>
+            <select class="topicChoose" name="topicChoose">
+              <option value="{{.Topic}}">Topic</option>
+              {{range $id, $topic := .Topics}}
+                <option value="{{$topic.Name}}">{{$topic.Name}}</option>
+              {{end}}
+            </select>
+            {{if .Logged}}
+                <input type="checkbox" name="likedCheckbox">
+                <label for="myCheckbox">Posts likés</label>
+                <input type="checkbox" name="dislikedCheckbox">
+                <label for="myCheckbox">Posts dislikés</label>
+                <input type="checkbox" name="createdCheckbox">
+                <label for="myCheckbox">Posts Créés</label>
+            {{end}}
+            <input  class="topicChoose" type="submit" value="Valider">
+            <a href="/home"><img src="https://i.postimg.cc/BbCGbHHw/666f966c0387c8eaecc88d4e3ee81ad0-2.png"></a>
+          </form>
+
+        <div class="user">
+        </div>
+        <div class="login-register">
+            <div class="user">
+                {{ if .Logged }}
+                    <h1 id="username-placeholder">{{.Username}} </h1>
+                {{ end }}
+            </div>
+            {{ if .Logged }}
+                <a href="/logout">Se Déconnecter</a>
+            {{ else }}
+                <a href="/login">Se Connecter</a>
+                <a href="/register">Créer un Compte</a>
+            {{ end }}
+        </div>
+    </nav>
+<!-- <nav class="outline">
+    <div class="nav-adjustments">
+        <a href="/home">Home</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+</nav> -->
+
+<main class="outline">
+    <div class="wrapper outline">
+        {{ $chat:= . }}
+        {{ $topic:= .Topic }}
+        {{range .Posts}}
+            {{ $liked := false }}
+            {{ $disliked := false }}
+            {{if $chat.Logged}}
+                {{ $id := .ID }}
+                {{range $index, $postLiked := $chat.Like.PostsLiked}}
+                    {{if eq $id $postLiked}}
+                        {{ $liked = true }}
+                    {{end}}
+                {{end}}
+                {{ $id := .ID }}
+                {{range $index, $postDisliked := $chat.Like.PostsDisliked}}
+                    {{if eq $id $postDisliked}}
+                        {{ $disliked = true }}
+                    {{end}}
+                {{end}}
+            {{end}}
+            
+            {{if eq $topic .Topic}}
+                {{ $show := false }}
+                {{if eq $chat.ShowLiked "on"}}
+                    {{if eq $liked true}}
+                        {{ $show = true }}
+                    {{end}}
+                {{end}}
+                {{if eq $chat.ShowDisliked "on"}}
+                    {{if eq $disliked true}}
+                        {{ $show = true }}
+                    {{end}}
+                {{end}}
+                {{if eq $chat.ShowCreated "on"}}
+                    {{ $show = true }}
+                {{end}}
+                {{if ne $chat.ShowLiked "on"}}
+                    {{if ne $chat.ShowDisliked "on"}}
+                        {{if ne $chat.ShowCreated "on"}}
+                            {{ $show = true }}
+                        {{end}}
+                    {{end}}
+                {{end}}
+
+                {{if eq $show true}}
+                    <div class="box-post outline">
+                        <p>{{.Writer}} :</p>
+                        <p>{{.Content}}</p>
+                        <p>{{.Like}} likes et {{.Dislike}} dislikes</p>
+
+                        {{if eq $chat.Username .Writer}}
+                            <div class="buttons-delete-modify">
+                                <form action="/deletePost" method="POST">
+                                    <input type="hidden" name="id" value="{{.ID}}">
+                                    <button type="submit"><img src="https://i.postimg.cc/FHxJFpsG/kisspng-waste-sorting-computer-i-3.png"></button>
+                                </form>
+                            </div>
+                        {{end}}
+                        <form class="wrapper-label" method="POST">
+                            <input class="comment-for-post-input" type="text" name="answer" required="required">
+                            <input type="hidden" name="idAnswer" value="{{.ID}}">
+                            <label class="comment-for-post-name-label">Commentaire</label>
+                            <input class="send" type="submit" value="Envoyer">
+                        </form>
+                        <div class="buttons-like-dislike-div">
+                            <form class="button-like" action="/likeDislike" method="POST">
+                                <input type="hidden" name="typeOfPost" value="posts">
+                                <input type="hidden" name="typeOfLike" value="like">
+                                <input type="hidden" name="id" value="{{.ID}}">
+                                <input type="hidden" name="like" value="{{.Like}}">
+                                {{if eq $liked true}}
+                                    <input type="hidden" name="update" value="-1">
+                                    <button><img class="active" src="https://i.postimg.cc/50p6tLt7/kisspng-emoji-thumb-signal-noto.png"></button>
+                                {{end}}
+                                {{if eq $liked false}}
+                                    {{if eq $disliked false}}
+                                        <input type="hidden" name="update" value="1">
+                                        <button><img src="https://i.postimg.cc/kgSSbSFR/kisspng-emoji-thumb-signal-noto.png"></button>
+                                    {{end}}
+                                {{end}}
+                            </form>
+
+
+                            <form class="button-dislike" action="/likeDislike" method="POST">
+                                <input type="hidden" name="typeOfPost" value="posts">
+                                <input type="hidden" name="typeOfLike" value="dislike">
+                                <input type="hidden" name="id" value="{{.ID}}">
+                                <input type="hidden" name="like" value="{{.Dislike}}">
+                                {{if eq $disliked true}}
+                                    <input type="hidden" name="update" value="-1">
+                                    <button><img class="active" src="https://i.postimg.cc/hv0cpr9c/rouge-1-fotor-bg-remover-202306.png"></button>
+                                {{end}}
+                                {{if eq $disliked false}}
+                                    {{if eq $liked false}}
+                                        <input type="hidden" name="update" value="1">
+                                        <button><img src="https://i.ibb.co/tHZq9WN/rouge.png"></button>
+                                    {{end}}
+                                {{end}}
+                            </form>
+                        </div>
+                    </div>
+                {{end}}
+
+                {{range .Answers}}
+                    {{ $liked := false }}
+                    {{ $disliked := false }}
+                    {{if $chat.Logged}}
+                        {{ $id := .ID }}
+                        {{range $index, $answerLiked := $chat.Like.AnswersLiked}}
+                            {{if eq $id $answerLiked}}
+                                {{ $liked = true }}
+                            {{end}}
+                        {{end}}
+                        {{ $id := .ID }}
+                        {{range $index, $answerDisliked := $chat.Like.AnswersDisliked}}
+                            {{if eq $id $answerDisliked}}
+                                {{ $disliked = true }}
+                            {{end}}
+                        {{end}}
+                    {{end}}
+
+                    {{ $show := false }}
+                    {{if eq $chat.ShowLiked "on"}}
+                        {{if eq $liked true}}
+                            {{ $show = true }}
+                        {{end}}
+                    {{end}}
+                    {{if eq $chat.ShowDisliked "on"}}
+                        {{if eq $disliked true}}
+                            {{ $show = true }}
+                        {{end}}
+                    {{end}}
+                    {{if eq $chat.ShowCreated "on"}}
+                        {{ $show = true }}
+                    {{end}}
+                    {{if ne $chat.ShowLiked "on"}}
+                        {{if ne $chat.ShowDisliked "on"}}
+                            {{if ne $chat.ShowCreated "on"}}
+                                {{ $show = true }}
+                            {{end}}
+                        {{end}}
+                    {{end}}
+
+                    {{if eq $show true}}
+                        <div class="box-response box-post outline">
+                            <p>{{.Writer}} : </p>
+                            <p>{{.Content}}</p>
+                            <p>{{.Like}} likes et {{.Dislike}} dislikes </p>
+                            {{if eq $chat.Username .Writer}}
+                                <div class="buttons-delete-modify">
+                                    <form action="/deleteAnswer" method="POST">
+                                        <input type="hidden" name="id" value="{{.ID}}">
+                                        <button type="submit"><img src="https://i.postimg.cc/FHxJFpsG/kisspng-waste-sorting-computer-i-3.png"></button>
+                                    </form>
+                                </div>
+                            {{end}}
+
+                            <form class="button-like" action="/likeDislike" method="POST">
+                                <input type="hidden" name="typeOfPost" value="answers">
+                                <input type="hidden" name="typeOfLike" value="like">
+                                <input type="hidden" name="id" value="{{.ID}}">
+                                <input type="hidden" name="like" value="{{.Like}}">
+                                {{if eq $liked true}}
+                                    <input type="hidden" name="update" value="-1">
+                                    <button><img class="active" src="https://i.postimg.cc/50p6tLt7/kisspng-emoji-thumb-signal-noto.png"></button>
+                                {{end}}
+                                {{if eq $disliked false}}
+                                    {{if eq $liked false}}
+                                        <input type="hidden" name="update" value="1">
+                                        <button><img src="https://i.postimg.cc/kgSSbSFR/kisspng-emoji-thumb-signal-noto.png"></button>
+                                    {{end}}
+                                {{end}}
+                                
+                            </form>
+
+                        
+                            <form class="button-dislike" action="/likeDislike" method="POST">
+                                <input type="hidden" name="typeOfPost" value="answers">
+                                <input type="hidden" name="typeOfLike" value="dislike">
+                                <input type="hidden" name="id" value="{{.ID}}">
+                                <input type="hidden" name="like" value="{{.Dislike}}">
+                                {{if eq $disliked true}}
+                                    <input type="hidden" name="update" value="-1">
+                                    <button><img class="active" src="https://i.postimg.cc/hv0cpr9c/rouge-1-fotor-bg-remover-202306.png"></button>
+                                {{end}}
+                                {{if eq $disliked false}}
+                                    {{if eq $liked false}}
+                                        <input type="hidden" name="update" value="1">
+                                        <button><img src="https://i.ibb.co/tHZq9WN/rouge.png"></button>
+                                    {{end}}
+                                {{end}}
+                            </form>
+
+                        </div>
+                    {{end}}
+                {{end}}
+            {{end}}
+        {{end}}
+    </div>
+
+    <aside>
+        <div class="box-left outline">
+            <img src="https://i.postimg.cc/jd8gVFQm/orchid-1-fotor-bg-remover-2023.png">
+        </div>
+    </aside>
+</main>
+
+<div class="outline">
+    <form action="/chat" method="post">
+        <input type="text" name="content" placeholder="Message">
+        <input type="hidden" name="topic" value="{{.Topic}}">
+        <input type="submit" value="Envoyer">
+    </form>
+</div>
+</body>
+</html>

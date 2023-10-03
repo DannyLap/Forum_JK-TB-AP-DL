@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/register.css">
+    <title>Connexion</title>
+</head>
+<body>
+    <main>
+        <form class="form_container" action="/login" method="POST">
+            <p class="form_container_heading">Connexion</p>
+            <input class="form_container_inputs" type="text" id="pseudo" name="pseudo" placeholder="Identifiant" required>
+            <input class="form_container_inputs" type="password" id="password" name="password" placeholder="Mot de passe" required>
+            <button class="form_container_button" type="submit"><span>Valider</span></button>
+            <script>
+                var button = document.querySelector('.form_container_button');
+        
+                button.addEventListener('mousemove', function(e) {
+                    var rect = button.getBoundingClientRect();
+                    var x = e.clientX - rect.left;
+                    var y = e.clientY - rect.top;
+        
+                    button.style.setProperty('--x', x + 'px');
+                    button.style.setProperty('--y', y + 'px');
+                });
+            </script> 
+            <p class="error-message">{{.Error}}</p>
+            <p>Vous n'avez pas encore de compte ? <a href="/register">Créer un compte</a></p>
+            <p><a href="/home">Retour à l'accueil</a></p>
+        </form>
+        {{ if .Logged }}
+       <script>
+                window.location.href = "/home" ;
+                </script>
+        {{ end }}
+    </main>
+             
+</body>
+    
+</html>

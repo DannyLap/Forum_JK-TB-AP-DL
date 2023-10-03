@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/register.css">
+    <title>Inscription</title>
+</head>
+
+<body>
+    <form class="form_containers" action="/register" method="POST">
+        <p class="form_container_headings">Inscription</p>
+        <!-- <label for="pseudo">Identifiant</label> -->
+        <input class="form_container_input" type="text" id="pseudo" name="pseudo"  placeholder="Identifiant" required>
+        <!-- <label for="mail">Adresse Mail</label> -->
+        <input class="form_container_input" type="email" id="mail" name="mail" placeholder="Adresse mail" pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" required>
+        <!-- <label for="password">Mot de passe</label> -->
+        <input class="form_container_input" type="password" id="password" name="password"  placeholder="Mot de passe" required>
+        <!-- <label for="password_verif">Confirmer le mot de passe</label> -->
+        <input class="form_container_input" type="password" id="password_verif" name="password_verif" placeholder="Confirmer le mot de passe" required>
+        <!-- affiche un message derreur grace a une template go situe dans le login.go -->
+        {{ if .ErrorMsg }}
+        <div class="error" color="red">{{ .ErrorMsg }}</div>
+        {{ end }}
+        <button class="form_container_button" type="submit"><span>S'inscrire</span></button>
+        <script>
+            var button = document.querySelector('.form_container_button');
+    
+            button.addEventListener('mousemove', function(e) {
+                var rect = button.getBoundingClientRect();
+                var x = e.clientX - rect.left;
+                var y = e.clientY - rect.top;
+    
+                button.style.setProperty('--x', x + 'px');
+                button.style.setProperty('--y', y + 'px');
+            });
+        </script> 
+        <p>Vous avez déjà un compte ? <a href="/login">Se connecter</a></p>
+        <p><a href="/home">Retour à l'accueil</a></p>
+    </form>
+</body>
+</html>

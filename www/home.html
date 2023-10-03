@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style/home.css">
+    <link rel="stylesheet" href="static/home.css">
+    <title>Forum</title>
+</head>
+<nav class="outline">
+    <!-- ... -->
+    <form action=/changeTopic>
+        <select class="topicChoose" name="topicChoose">
+            <option>Topic</option>
+            {{range $id, $topic := .Topics}}
+            <option value="{{$topic.Name}}">{{$topic.Name}}</option>
+            {{end}}
+        </select>
+        <input  class="anim" type="submit"><img src="https://i.postimg.cc/cC5YbwZN/picmix-com-1694197-1.gif">
+        
+    </form>
+    <div class="user">
+    </div>
+    <div class="login-register">
+        <div class="user">
+            {{ if .Logged }}
+                <h1 id="username-placeholder">{{ .User.Username }} </h1>
+            {{ end }}
+        </div>
+        {{ if .Logged }}
+            <a href="/logout">Se Déconnecter</a>
+        {{ else }}
+            <a href="/login">Se Connecter</a>
+            <a href="/register">Créer un Compte</a>
+        {{ end }}
+    </div>
+</nav>
+<body>
+<main>
+    <div class="wrapper">
+        <div class="box-add-topic outline">
+            <form method="post">
+                <div class="wrapper-label">
+                    <input class="topic-input" type="text" name="newTopic" required="required">
+                    <label class="topic-name-label">Sujet du nouveau Topic</label>
+                    <input class="button-add-topic" type="submit" value="Ajouter le nouveau Topic">
+                </div>
+            </form>
+        </div>
+        {{range .Topics}}
+        <div class="outline">
+            <form class="button-style-form" method="POST" action=/changeTopic>
+                <input type="hidden" name="topicChoose" value="{{.Name}}">
+                <button class="button-style">{{.Name}}</button>
+            </form>
+        </div>
+        {{end}}
+    </div>
+    <aside>
+        <div class="box-left outline">
+            <img src="https://i.postimg.cc/jS4mnShr/picmix-com-1745165-1.gif">
+        </div>
+    </aside>
+</main>
+</body>
+</html>
